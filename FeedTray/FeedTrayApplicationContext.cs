@@ -1,6 +1,7 @@
 ﻿using Common.TrayApplication;
 using FeedTray.Data.Config;
 using FeedTray.Data.Config.Async;
+using FeedTray.Properties;
 using log4net;
 using System;
 using System.Collections.Generic;
@@ -99,6 +100,16 @@ namespace FeedTray
 			notifyIcon.ContextMenuStrip.Items.Add(feedsMenuItem);
 			notifyIcon.ContextMenuStrip.Items.Add(new ToolStripSeparator());
 			notifyIcon.ContextMenuStrip.Items.Add(exitMenuItem);
+		}
+
+		protected override string GetApplicationName()
+		{
+			return Resources.AppTitle;
+		}
+
+		protected override Icon GetApplicationIcon()
+		{
+			return new Icon(GetType(), "appicon.ico");
 		}
 
 		#endregion

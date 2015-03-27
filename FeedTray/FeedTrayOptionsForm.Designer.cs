@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FeedTrayOptionsForm));
 			this.splitContainer = new System.Windows.Forms.SplitContainer();
 			this.feedsListBox = new System.Windows.Forms.CheckedListBox();
 			this.addButton = new System.Windows.Forms.Button();
@@ -88,14 +87,13 @@
 			this.feedPropertyGrid.TabIndex = 0;
 			this.feedPropertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.feedPropertyGrid_PropertyValueChanged);
 			// 
-			// OptionsForm
+			// FeedTrayOptionsForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(784, 561);
 			this.Controls.Add(this.splitContainer);
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.Name = "OptionsForm";
+			this.Name = "FeedTrayOptionsForm";
 			this.Text = "FeedTray Options";
 			this.splitContainer.Panel1.ResumeLayout(false);
 			this.splitContainer.Panel2.ResumeLayout(false);
