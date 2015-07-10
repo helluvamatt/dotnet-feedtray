@@ -2,23 +2,16 @@
 using FeedTray.Data.Config;
 using FeedTray.Data.Config.Async;
 using FeedTray.Properties;
-using log4net;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Configuration;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace FeedTray
 {
-	public class FeedTrayApplicationContext : TrayApplicationContext
+	public class FeedTrayApplicationContext : TrayApplicationContext<Data.Config.Settings>
 	{
 		#region Public properties
 
@@ -32,36 +25,51 @@ namespace FeedTray
 		/// </summary>
 		public Database ConfigDatabase { get; private set; }
 
+		protected override string ApplicationName
+		{
+			get
+			{
+				return Resources.AppTitle;
+			}
+		}
+
+		protected override Icon ApplicationIcon
+		{
+			get
+			{
+				return new Icon(GetType(), "appicon.ico");
+			}
+		}
+
+		protected override string AppDataPath
+		{
+			get
+			{
+				return Path.GetDirectoryName(Path.GetFullPath(Uri.UnescapeDataString(new Uri(Assembly.GetExecutingAssembly().CodeBase).AbsolutePath)));
+			}
+		}
+
 		#endregion
 
 		public FeedTrayApplicationContext() : base()
 		{
 			Feeds = new Dictionary<int, Feed>();
 
-			// Initialize the AppDataFolder and make sure it is created: %APPDATA%/FeedTray
-			AppDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create), "FeedTray");
-			Directory.CreateDirectory(AppDataFolder);
-
 			// Initialize the database under the AppDataFolder: %APPDATA%/FeedTray/FeedTray.db
-			string dbFile = Path.Combine(AppDataFolder, "FeedTray.db");
+			string dbFile = Path.Combine(AppDataPath, "FeedTray.db");
 			ConfigDatabase = new Database(dbFile);
 		}
 
 		#region TrayApplicationContext implementation
 
-		protected override OptionsForm BuildOptionsForm()
+		protected override OptionsForm OnBuildOptionsForm()
 		{
 			FeedTrayOptionsForm form = new FeedTrayOptionsForm();
 			form.FeedUpdated += optionsForm_FeedUpdated;
 			return form;
 		}
 
-		protected override void OnInitializeContext()
-		{
-			ConfigDatabase.GetFeedsAsync(ConfigDatabase_GetFeeds);
-		}
-
-		protected override void BuildContextMenu()
+		protected override void OnBuildContextMenu(ContextMenuStrip menu)
 		{
 			// Build the context menu: showOptionsMenuItem
 			ToolStripMenuItem showOptionsMenuItem = new ToolStripMenuItem("&Manage");
@@ -89,27 +97,22 @@ namespace FeedTray
 				noFeedsMenuItem.Enabled = false;
 				feedsMenuItem.DropDownItems.Add(noFeedsMenuItem);
 			}
-			
+
 			// Build the context menu: exitMenuItem
 			ToolStripMenuItem exitMenuItem = new ToolStripMenuItem("E&xit");
 			exitMenuItem.Click += exitMenuItem_Click;
 
 			// Build contextMenu
-			notifyIcon.ContextMenuStrip.Items.Add(showOptionsMenuItem);
-			notifyIcon.ContextMenuStrip.Items.Add(new ToolStripSeparator());
-			notifyIcon.ContextMenuStrip.Items.Add(feedsMenuItem);
-			notifyIcon.ContextMenuStrip.Items.Add(new ToolStripSeparator());
-			notifyIcon.ContextMenuStrip.Items.Add(exitMenuItem);
+			menu.Items.Add(showOptionsMenuItem);
+			menu.Items.Add(new ToolStripSeparator());
+			menu.Items.Add(feedsMenuItem);
+			menu.Items.Add(new ToolStripSeparator());
+			menu.Items.Add(exitMenuItem);
 		}
 
-		protected override string GetApplicationName()
+		protected override void OnInitializeContext()
 		{
-			return Resources.AppTitle;
-		}
-
-		protected override Icon GetApplicationIcon()
-		{
-			return new Icon(GetType(), "appicon.ico");
+			ConfigDatabase.GetFeedsAsync(ConfigDatabase_GetFeeds);
 		}
 
 		#endregion
