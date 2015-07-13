@@ -2,12 +2,7 @@
 using FeedTray.Data.Config;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace FeedTray
@@ -37,6 +32,13 @@ namespace FeedTray
 			}
 		}
 
+		public override void PopulateSettings()
+		{
+			// TODO
+		}
+
+		#region Event handlers
+
 		private void addButton_Click(object sender, EventArgs e)
 		{
 			int newId = _BoundFeeds.Values.Max(f => f.Id) + 1;
@@ -53,6 +55,8 @@ namespace FeedTray
 			// TODO This may not be needed
 			OnFeedUpdated((Feed)feedPropertyGrid.SelectedObject);
 		}
+
+		#endregion
 
 		#region Feed updated event
 
